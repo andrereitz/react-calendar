@@ -30,7 +30,7 @@ export const DaysStyles = styled.div`
     flex-flow: row wrap;
     justify-content: flex-start;
 
-    span {
+    div {
         flex: 0 1 14.28%;
         text-align: left;
         padding: 5px;
@@ -53,16 +53,26 @@ export const DaysStyles = styled.div`
             list-style: none;
             padding: 0 0 0 25px;
             margin: 0;
+            overflow-y: auto;
+            max-height: 100%;
 
             li {
                 width: 100%;
-                padding: 3px 5px;
+                padding: 0;
                 font-size: 11px;
                 white-space: nowrap;
                 text-overflow: ellipsis;
                 overflow: hidden;
                 cursor: pointer;
                 margin: 2px 0 0 0;
+                display: flex;
+
+                span {
+                    flex: 1 1 100%;
+                    overflow: hidden;
+                    padding: 3px;
+                    border-radius: 2px;
+                }
             }
         }
     }

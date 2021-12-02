@@ -1,4 +1,6 @@
-import { useEffect, useState, useLayoutEffect } from 'react';
+import { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import { format, fromUnixTime } from 'date-fns';
+import {groupBy} from 'lodash';
 import { MONTHS as MONTHS_NAMES, WEEK_DAYS } from 'constants/calendar';
 
 import { CalendarStyles, TestDatesStyles, HeaderStyles, WeekdaysStyles, DaysStyles } from './Calendar.styles';
@@ -12,16 +14,26 @@ import { selectEvents } from 'store/Events/Events.selectors';
 export function Calendar({ date }) {
     const [currentDate, setCurrentDate] = useState(date ? new Date(date) : new Date());
     const [calendarData, setCalendarData] = useState(null);
+    const [groupedEvents, setGroupedEvents] = useState(null);
+    const renderedRef = useRef([]);
     const dispatch = useDispatch();
     const events = useSelector(selectEvents);
 
     console.log(events);
 
     useEffect(() => {
-        dispatch(addEvent({ id: 2, date: '10 11 2021', title: 'test 1', color: 'orange' }))
-        dispatch(addEvent({ id: 3, date: '15 11 2021', title: 'test 2', color: 'blue' }))
-        dispatch(addEvent({ id: 4, date: '15 11 2021', title: 'test 2', color: 'blue' }))
-        dispatch(addEvent({ id: 5, date: '15 3 2016', title: 'test 3', color: 'gray' }))
+        // dispatch(addEvent({ id: 2, date: '10 11 2021', unix: '1638457510957', title: 'test 2', color: 'orange' }))
+        // dispatch(addEvent({ id: 2, date: '10 11 2021', unix: '1638457510957', title: 'test 2.5', color: 'purple' }))
+        // dispatch(addEvent({ id: 3, date: '15 11 2021', unix: '1638458188824', title: 'test 3', color: 'blue' }))
+        // dispatch(addEvent({ id: 4, date: '15 11 2021', unix: '1638457669938', title: 'test 4', color: 'blue' }))
+        // dispatch(addEvent({ id: 5, date: '15 3 2016', unix: '1638457682658', title: 'test 5', color: 'gray' }))
+    }, [])
+
+    useEffect(() => {
+        console.log(events.sort((prevT, currT) => prevT > currT))
+        console.log('### grouped', groupBy(events, 'unix'), '### events', events)
+        const sorted = events.sort((prevT, currT) => prevT.unix - currT.unix);
+        setGroupedEvents( groupBy(sorted, 'unix'));
     }, [])
 
     function getBoardControl(weekday, days) {
@@ -44,7 +56,7 @@ export function Calendar({ date }) {
         const placeholderStart = new Array(placeholderNumberStart).fill(0);
         const placeholderEnd = placeholderNumberEnd > 0 ? new Array(placeholderNumberEnd).fill(0) : [];
 
-        setCalendarData({year, month, numDays, days, placeholderStart, placeholderEnd})
+        setCalendarData({year, month: month + 1, numDays, days, placeholderStart, placeholderEnd})
     }, [currentDate])
 
     useLayoutEffect(() => {
@@ -75,21 +87,33 @@ export function Calendar({ date }) {
                     </WeekdaysStyles>
                     <DaysStyles className="days">
                         {calendarData && calendarData.placeholderStart.map( (_, i) => (
-                            <span key={`ph-top-${i}`} className="placeholder"></span>
+                            <div key={`ph-top-${i}`} className="placeholder"></div>
                         ))}
                         {calendarData && calendarData.days.map( day => (
-                            <span key={`day-${day}`} data-day={day}>
-                                <ul className="events">
-                                    {events.map( event => {
-                                        if(event.date === `${day} ${calendarData.month} ${calendarData.year}`) {
-                                           return (<li key={`event-${event.id}`} style={{ background: event.color }}>{event.title}</li>);
-                                        }
-                                    })}
+                            <div key={`day-${day}`} data-day={day}>
+                                <ul>
+                                    {groupedEvents && Object.keys(groupedEvents).map( (eventUnix, index) => {
+                                        if( format(fromUnixTime(eventUnix / 1000), 'dd M yyyy') !== `${day} ${calendarData.month} ${calendarData.year}`) return;
+
+                                        return(
+                                            <li key={`${eventUnix}-${index}`}>
+                                                {groupedEvents[eventUnix].map( event => {
+                                                    return(
+                                                        <span key={event.id} style={{ background: event.color }}>
+                                                            {/* {format(fromUnixTime(event.unix / 1000), 'dd/M/Y hh:mm')} */}
+                                                            {event.title} 
+                                                        </span>
+                                                    )
+                                                })}
+                                            </li>
+                                        )
+                                    }
+                                    )}
                                 </ul>
-                            </span>
+                            </div>
                         ))}
                         {calendarData && calendarData.placeholderEnd.map( (_, i) => (
-                            <span key={`ph-bottom-${i}`} className="placeholder"></span>
+                            <div key={`ph-bottom-${i}`} className="placeholder"></div>
                         ))}
                     </DaysStyles>
                 </>
