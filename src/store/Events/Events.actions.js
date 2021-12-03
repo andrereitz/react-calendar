@@ -1,20 +1,28 @@
-export function addEvent(event){
-    return{
+export function addEvent(event) {
+    return {
         type: 'ADD_EVENT',
         payload: event
     }
 }
 
-export function updateEvent(id, event){
-    return{
+export function updateEvent(payload) {
+    return {
         type: 'UPDATE_EVENT',
-        payload: { id, event }
+        payload
     }
 }
 
-export function deleteEvent(id){
-    return{
+export function deleteEvent(id) {
+    return {
         type: 'DELETE_EVENT',
         payload: id
+    }
+}
+
+export function changeView({ show, mode, id }) {
+    console.log(show, mode, id)
+    return {
+        type: 'CHANGE_VIEW',
+        payload: { show, mode, id }
     }
 }

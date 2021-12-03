@@ -1,14 +1,14 @@
 import { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { format, fromUnixTime } from 'date-fns';
 import {groupBy} from 'lodash';
+
 import { MONTHS as MONTHS_NAMES, WEEK_DAYS } from 'constants/calendar';
+import { EVENT_VIEW_ACTIONS } from 'constants/eventView';
+import { formatFromUnix } from 'helpers/formatters';
 
 import { CalendarStyles, TestDatesStyles, HeaderStyles, WeekdaysStyles, DaysStyles } from './Calendar.styles';
 
 import { useDispatch, useSelector } from 'react-redux';
-
-import { addEvent } from 'store/Events/Events.actions';
-
+import { addEvent, changeView } from 'store/Events/Events.actions';
 import { selectEvents } from 'store/Events/Events.selectors';
 
 export function Calendar({ date }) {
@@ -19,28 +19,24 @@ export function Calendar({ date }) {
     const dispatch = useDispatch();
     const events = useSelector(selectEvents);
 
-    console.log(events);
+    console.log('### the events', events);
 
     useEffect(() => {
-        // dispatch(addEvent({ id: 2, date: '10 11 2021', unix: '1638457510957', title: 'test 2', color: 'orange' }))
-        // dispatch(addEvent({ id: 2, date: '10 11 2021', unix: '1638457510957', title: 'test 2.5', color: 'purple' }))
-        // dispatch(addEvent({ id: 3, date: '15 11 2021', unix: '1638458188824', title: 'test 3', color: 'blue' }))
-        // dispatch(addEvent({ id: 4, date: '15 11 2021', unix: '1638457669938', title: 'test 4', color: 'blue' }))
-        // dispatch(addEvent({ id: 5, date: '15 3 2016', unix: '1638457682658', title: 'test 5', color: 'gray' }))
-    }, [])
-
-    useEffect(() => {
-        console.log(events.sort((prevT, currT) => prevT > currT))
-        console.log('### grouped', groupBy(events, 'unix'), '### events', events)
+        console.log('### events changed')
         const sorted = events.sort((prevT, currT) => prevT.unix - currT.unix);
         setGroupedEvents( groupBy(sorted, 'unix'));
-    }, [])
+    }, [events])
 
     function getBoardControl(weekday, days) {
         if(weekday === 5 && days === 31) return 42
         if(weekday === 6) return 42;
 
         return 35;
+    }
+
+    function handleViewToggle(show, mode, event) {
+        console.log('handle toggle view', mode, event);
+        dispatch(changeView({ show, mode, id: event }));
     }
 
     useLayoutEffect(() => {
@@ -63,7 +59,7 @@ export function Calendar({ date }) {
         if(date) {
             setCurrentDate(new Date(date));
         }
-    }, [date])
+    }, [date, events])
 
     return(
         <CalendarStyles>
@@ -93,14 +89,17 @@ export function Calendar({ date }) {
                             <div key={`day-${day}`} data-day={day}>
                                 <ul>
                                     {groupedEvents && Object.keys(groupedEvents).map( (eventUnix, index) => {
-                                        if( format(fromUnixTime(eventUnix / 1000), 'dd M yyyy') !== `${day} ${calendarData.month} ${calendarData.year}`) return;
+                                        if( formatFromUnix(eventUnix, 'd M yyyy') !== `${day} ${calendarData.month} ${calendarData.year}`) return;
 
                                         return(
                                             <li key={`${eventUnix}-${index}`}>
                                                 {groupedEvents[eventUnix].map( event => {
                                                     return(
-                                                        <span key={event.id} style={{ background: event.color }}>
-                                                            {/* {format(fromUnixTime(event.unix / 1000), 'dd/M/Y hh:mm')} */}
+                                                        <span 
+                                                            onClick={() => handleViewToggle(true, EVENT_VIEW_ACTIONS.view, event.id)} 
+                                                            key={event.id} 
+                                                            style={{ background: event.color }}
+                                                        >
                                                             {event.title} 
                                                         </span>
                                                     )

@@ -1,17 +1,20 @@
 import './App.css';
 
-import { Calendar } from 'components';
+import { Calendar, EventView } from 'components';
 
-import store from 'store/store';
-import { Provider as ReduxProvider } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { selectView } from 'store/Events/Events.selectors';
 
 function App() {
+  const view = useSelector(selectView);
+
   return (
-    <ReduxProvider store={store}>
-      <div className="App" style={{textAlign: 'center'}}>
-        <Calendar />
-      </div>
-    </ReduxProvider>
+    <div className="App" style={{textAlign: 'center'}}>
+      <Calendar />
+      {view.show && (
+        <EventView />
+      )}
+    </div>
   );
 }
 
