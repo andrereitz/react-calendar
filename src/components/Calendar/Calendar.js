@@ -1,5 +1,5 @@
-import { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import {groupBy} from 'lodash';
+import { useEffect, useState, useLayoutEffect } from 'react';
+import { groupBy } from 'lodash';
 
 import { MONTHS as MONTHS_NAMES, WEEK_DAYS } from 'constants/calendar';
 import { EVENT_VIEW_ACTIONS } from 'constants/eventView';
@@ -7,22 +7,20 @@ import { formatFromUnix } from 'helpers/formatters';
 
 import { CalendarStyles, TestDatesStyles, HeaderStyles, WeekdaysStyles, DaysStyles } from './Calendar.styles';
 
+import { Button } from 'components'
+
 import { useDispatch, useSelector } from 'react-redux';
-import { addEvent, changeView } from 'store/Events/Events.actions';
+import { changeView } from 'store/Events/Events.actions';
 import { selectEvents } from 'store/Events/Events.selectors';
 
 export function Calendar({ date }) {
     const [currentDate, setCurrentDate] = useState(date ? new Date(date) : new Date());
     const [calendarData, setCalendarData] = useState(null);
     const [groupedEvents, setGroupedEvents] = useState(null);
-    const renderedRef = useRef([]);
     const dispatch = useDispatch();
     const events = useSelector(selectEvents);
 
-    console.log('### the events', events);
-
     useEffect(() => {
-        console.log('### events changed')
         const sorted = events.sort((prevT, currT) => prevT.unix - currT.unix);
         setGroupedEvents( groupBy(sorted, 'unix'));
     }, [events])
@@ -35,7 +33,6 @@ export function Calendar({ date }) {
     }
 
     function handleViewToggle(show, mode, event) {
-        console.log('handle toggle view', mode, event);
         dispatch(changeView({ show, mode, id: event }));
     }
 
@@ -67,14 +64,15 @@ export function Calendar({ date }) {
                 <>
                     <TestDatesStyles>
                         <h2>Test Dates</h2>
-                        <button onClick={() => setCurrentDate(new Date()) }>Today</button>
-                        <button onClick={() => setCurrentDate(new Date('Feb 25 2022 15:30')) }>Change to Feb 2022</button>
-                        <button onClick={() => setCurrentDate(new Date('Mar 1 2020')) }>Change to Mar 2020</button>
-                        <button onClick={() => setCurrentDate(new Date('Dec 2018')) }>Change to Dec 2018</button>
-                        <button onClick={() => setCurrentDate(new Date('Apr 2016')) }>Change to Apr 2016</button>
+                        <Button click={() => setCurrentDate(new Date()) }>Today</Button>
+                        <Button click={() => setCurrentDate(new Date('Feb 25 2022 15:30')) } ml={10}>Change to Feb 2022</Button>
+                        <Button click={() => setCurrentDate(new Date('Mar 1 2020')) } ml={10}>Change to Mar 2020</Button>
+                        <Button click={() => setCurrentDate(new Date('Dec 2018')) } ml={10}>Change to Dec 2018</Button>
+                        <Button click={() => setCurrentDate(new Date('Apr 2016')) } ml={10}>Change to Apr 2016</Button>
                     </TestDatesStyles>
                     <HeaderStyles>
-                        {MONTHS_NAMES[calendarData.month]} {calendarData.year}
+                        {MONTHS_NAMES[calendarData.month - 1]} {calendarData.year}
+                        <Button click={() => handleViewToggle(true, EVENT_VIEW_ACTIONS.new, null)}>New Reminder</Button>
                     </HeaderStyles>
                     <WeekdaysStyles className="weekdays">
                         {WEEK_DAYS.map( day => (
@@ -89,7 +87,7 @@ export function Calendar({ date }) {
                             <div key={`day-${day}`} data-day={day}>
                                 <ul>
                                     {groupedEvents && Object.keys(groupedEvents).map( (eventUnix, index) => {
-                                        if( formatFromUnix(eventUnix, 'd M yyyy') !== `${day} ${calendarData.month} ${calendarData.year}`) return;
+                                        if( formatFromUnix(eventUnix, 'd M yyyy') !== `${day} ${calendarData.month} ${calendarData.year}`) return null;
 
                                         return(
                                             <li key={`${eventUnix}-${index}`}>

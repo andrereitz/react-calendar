@@ -11,7 +11,10 @@ export const TestDatesStyles = styled.div`
 `
 
 export const HeaderStyles = styled.div`
-    padding: 10px 0
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
 `
 
 export const WeekdaysStyles = styled.div`

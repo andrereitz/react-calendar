@@ -20,7 +20,6 @@ export function deleteEvent(id) {
 }
 
 export function changeView({ show, mode, id }) {
-    console.log(show, mode, id)
     return {
         type: 'CHANGE_VIEW',
         payload: { show, mode, id }

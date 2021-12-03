@@ -9,6 +9,7 @@ export const EventViewStyles = styled.div`
     background: #F0F0F0;
     padding: 15px;
     border-radius: 8px;
+    box-shadow: 0 0 30px 0 rgba(0,0,0,.4);
 
     ${ props => props.width && `
         margin-left: -${props.width / 2}px;
@@ -29,13 +30,6 @@ export const EventViewStyles = styled.div`
             flex: 0 0 auto;
             cursor: pointer;
             display: flex;
-
-            button {
-                &:first-child {
-                    margin-right: 15px;
-                    cursor: pointer;
-                }
-            }
         }
     }
     form {
@@ -106,4 +100,13 @@ export const EventViewStyles = styled.div`
             }
         }
     }
+`
+
+export const ErrorStyles = styled.ul`
+    list-style: none;
+    text-align: left;
+    padding: 15px;
+    background: red;
+    color: white;
+    border-radius: 8px;
 `
