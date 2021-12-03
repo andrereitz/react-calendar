@@ -64,17 +64,17 @@ export const DaysStyles = styled.div`
                 padding: 0;
                 font-size: 11px;
                 white-space: nowrap;
-                text-overflow: ellipsis;
                 overflow: hidden;
                 cursor: pointer;
                 margin: 2px 0 0 0;
                 display: flex;
-
+                
                 span {
                     flex: 1 1 100%;
                     overflow: hidden;
                     padding: 3px;
                     border-radius: 2px;
+                    text-overflow: ellipsis;
                 }
             }
         }

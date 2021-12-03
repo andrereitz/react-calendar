@@ -4,13 +4,13 @@ import { format } from 'date-fns'
 
 import { EVENT_VIEW_ACTIONS, COLORS } from 'constants/eventView';
 import { HOURS } from 'constants/calendar';
-import { formatFromUnix } from 'helpers';
+import { formatFromUnix, generateRandomId } from 'helpers';
 
 import "react-datepicker/dist/react-datepicker.css";
 import { EventViewStyles, ErrorStyles } from './EventView.styles';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { changeView, updateEvent, addEvent } from 'store/Events/Events.actions';
+import { changeView, updateEvent, addEvent, deleteEvent } from 'store/Events/Events.actions';
 import { selectView, selectEvent } from 'store/Events/Events.selectors';
 
 import { Button } from 'components';
@@ -34,7 +34,7 @@ export function EventView() {
 
     function handleUpdate(id) {
         setErrors(null);
-        console.log('the validate', validate());
+        
         if(validate()) {
             dispatch(updateEvent(localEvent));
             dispatch(changeView({ show: true, mode: EVENT_VIEW_ACTIONS.view, id: localEvent.id }));
@@ -43,18 +43,22 @@ export function EventView() {
 
     function handleAdd() {
         setErrors(null);
-        console.log('the validate', validate());
+        
         if(validate()) {
             dispatch(addEvent(localEvent));
             dispatch(changeView({ show: false, mode: EVENT_VIEW_ACTIONS.view, id: null }));
         }
     }
 
+    function handleDelete() {
+        dispatch(deleteEvent(localEvent.id))
+        dispatch(changeView({ show: false, mode: EVENT_VIEW_ACTIONS.view, id: null }));
+    }
+
     function validate() {
         const errorArr = [];
-        console.log('the title', localEvent.title.length)
+        
         if( localEvent.title.length <= 0 || localEvent.title.length > 30) {
-            console.log('push error')
             errorArr.push('Title must be greter than 0 and smaller than 30 characteres');
         }
 
@@ -80,7 +84,7 @@ export function EventView() {
         }else{
             const unixNow = Date.now();
             setLocalEvent({
-                id: Math.floor(Math.random() * Date.now()),
+                id: generateRandomId(),
                 title: '',
                 date: formatFromUnix(unixNow, 'd M yyyy'),
                 unix: unixNow,
@@ -107,7 +111,10 @@ export function EventView() {
                         <h1>{EVENT_VIEW_ACTIONS.new ? 'Add New Reminder' : event.title}</h1>
                         <div className="actions">
                             {view.mode === EVENT_VIEW_ACTIONS.view && (
-                                <Button className="edit" click={() => handleEditChange()} mr={10}>Edit</Button>
+                                <>
+                                    <Button click={() => handleDelete()} mr={10}>Delete</Button>
+                                    <Button click={() => handleEditChange()} mr={10}>Edit</Button>
+                                </>
                             )}
                             {view.mode === EVENT_VIEW_ACTIONS.edit && (
                                 <Button className="save" click={() => handleUpdate()} mr={10}>Save</Button>
@@ -119,7 +126,7 @@ export function EventView() {
                         </div>
                     </div>
                     <form onSubmit={handleUpdate} style={{ background: localEvent.color }}>
-                        {errors && (
+                        {errors && errors.length > 0 && (
                             <ErrorStyles>
                                 {errors.map( (err, index) => (
                                     <li key={`val-err-${index}`}>{err}</li>
