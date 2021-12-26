@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeView } from 'store/Events/Events.actions';
 import { selectEvents } from 'store/Events/Events.selectors';
 
+import { getDateInfo, getCalendarPlaceholders } from 'utils/date';
+
 export function Calendar({ date }) {
     const [currentDate, setCurrentDate] = useState(date ? new Date(date) : new Date());
     const [calendarData, setCalendarData] = useState(null);
@@ -25,31 +27,16 @@ export function Calendar({ date }) {
         setGroupedEvents( groupBy(sorted, 'unix'));
     }, [events])
 
-    function getBoardControl(weekday, days) {
-        if(weekday === 5 && days === 31) return 42
-        if(weekday === 6) return 42;
-
-        return 35;
-    }
-
     function handleViewToggle(show, mode, event) {
         dispatch(changeView({ show, mode, id: event }));
     }
 
     useLayoutEffect(() => {
-        const year = currentDate.getYear() + 1900;
-        const month = currentDate.getMonth();
-        const numDays = new Date(year, month + 1, 0).getDate();
-        const days = new Array(numDays).fill(1).map( (d, i) => i + 1);
+        const { year, month, daysOnMonth, daysOfMonth } = getDateInfo(currentDate)
+        const { placeholderStart, placeholderEnd } = getCalendarPlaceholders(currentDate)
 
-        const placeholderNumberStart = new Date(year, month, 1).getDay();
-        const boardControl = getBoardControl(placeholderNumberStart, numDays);
-        const placeholderNumberEnd = boardControl - (days[days.length - 1] + placeholderNumberStart);
+        setCalendarData({year, month: month, daysOnMonth, daysOfMonth, placeholderStart, placeholderEnd})
 
-        const placeholderStart = new Array(placeholderNumberStart).fill(0);
-        const placeholderEnd = placeholderNumberEnd > 0 ? new Array(placeholderNumberEnd).fill(0) : [];
-
-        setCalendarData({year, month: month + 1, numDays, days, placeholderStart, placeholderEnd})
     }, [currentDate])
 
     useLayoutEffect(() => {
@@ -80,10 +67,10 @@ export function Calendar({ date }) {
                         ))}
                     </WeekdaysStyles>
                     <DaysStyles className="days">
-                        {calendarData && calendarData.placeholderStart.map( (_, i) => (
+                        {calendarData.placeholderStart.map( (_, i) => (
                             <div key={`ph-top-${i}`} className="placeholder"></div>
                         ))}
-                        {calendarData && calendarData.days.map( day => (
+                        {calendarData.daysOfMonth.map( day => (
                             <div key={`day-${day}`} data-day={day}>
                                 <ul>
                                     {groupedEvents && Object.keys(groupedEvents).map( (eventUnix, index) => {
@@ -109,7 +96,7 @@ export function Calendar({ date }) {
                                 </ul>
                             </div>
                         ))}
-                        {calendarData && calendarData.placeholderEnd.map( (_, i) => (
+                        {calendarData.placeholderEnd.map( (_, i) => (
                             <div key={`ph-bottom-${i}`} className="placeholder"></div>
                         ))}
                     </DaysStyles>
