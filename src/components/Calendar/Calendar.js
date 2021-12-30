@@ -1,5 +1,6 @@
 import { useEffect, useState, useLayoutEffect } from 'react';
 import { groupBy } from 'lodash';
+import { addMonths } from 'date-fns';
 
 import { MONTHS as MONTHS_NAMES, WEEK_DAYS } from 'constants/calendar';
 import { EVENT_VIEW_ACTIONS } from 'constants/eventView';
@@ -39,11 +40,22 @@ export function Calendar({ date }) {
         }
     }
 
-    useLayoutEffect(() => {
-        const { year, month, daysOnMonth, daysOfMonth } = getDateInfo(currentDate)
-        const { placeholderStart, placeholderEnd } = getCalendarPlaceholders(currentDate)
+    function navigateMonth(order) {
+        let targetDate;
+        if(order === 'next') {
+            targetDate = addMonths(currentDate, 1);
+        } else {
+            targetDate = addMonths(currentDate, -1);
+        }
 
-        setCalendarData({year, month: month, daysOnMonth, daysOfMonth, placeholderStart, placeholderEnd})
+        setCurrentDate(new Date(targetDate))
+    }
+
+    useLayoutEffect(() => {
+        const { year, month, daysOnMonth, daysOfMonth } = getDateInfo(currentDate);
+        const { placeholderStart, placeholderEnd } = getCalendarPlaceholders(currentDate);
+
+        setCalendarData({year, month, daysOnMonth, daysOfMonth, placeholderStart, placeholderEnd})
     }, [currentDate])
 
     useLayoutEffect(() => {
@@ -65,8 +77,10 @@ export function Calendar({ date }) {
                         <Button click={() => setCurrentDate(new Date('Apr 2016')) } ml={10}>Change to Apr 2016</Button>
                     </TestDatesStyles>
                     <HeaderStyles>
-                        {MONTHS_NAMES[calendarData.month - 1]} {calendarData.year}
-                        <Button click={(e) => handleViewToggle(e, true, EVENT_VIEW_ACTIONS.new, null)}>New Reminder</Button>
+                        {/* <Button click={(e) => handleViewToggle(e, true, EVENT_VIEW_ACTIONS.new, null)}>New Reminder</Button> */}
+                        <span onClick={() => navigateMonth('prev')}>{`<`}</span>
+                        <span>{MONTHS_NAMES[calendarData.month - 1]} {calendarData.year}</span>
+                        <span onClick={() => navigateMonth('next')}>{`>`}</span>
                     </HeaderStyles>
                     <WeekdaysStyles className="weekdays">
                         {WEEK_DAYS.map( day => (
