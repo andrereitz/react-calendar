@@ -11,13 +11,15 @@ import { EventViewStyles, ErrorStyles } from './EventView.styles';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { changeView, updateEvent, addEvent, deleteEvent } from 'store/Events/Events.actions';
-import { selectView, selectEvent } from 'store/Events/Events.selectors';
+import { selectView, selectEvent, selectEdittingDate } from 'store/Events/Events.selectors';
+
+import { getDateInfo } from 'utils';
 
 import { Button } from 'components';
 
 export function EventView() {
     const [localEvent, setLocalEvent] = useState(null)
-    const [time, setTime] = useState(null);
+    const [time, setTime] = useState('01:00');
     const [date, setDate] = useState(null);
     const [errors, setErrors] = useState([]);
     const [width, setWidth] = useState(null);
@@ -27,6 +29,7 @@ export function EventView() {
     const dispatch = useDispatch();
     const view = useSelector(selectView);
     const event = useSelector(state => selectEvent(state, view.id));
+    const edittingDate = useSelector(selectEdittingDate);
 
     function handleEditChange() {
         dispatch(changeView({ show: true, mode: EVENT_VIEW_ACTIONS.edit, id: localEvent.id }));
@@ -59,7 +62,7 @@ export function EventView() {
         const errorArr = [];
         
         if( localEvent.title.length <= 0 || localEvent.title.length > 30) {
-            errorArr.push('Title must be greter than 0 and smaller than 30 characteres');
+            errorArr.push('Title must be more than 0 and less than 30 characteres');
         }
 
         if (errorArr.length > 0){
@@ -82,25 +85,31 @@ export function EventView() {
             setTime(formatFromUnix(event.unix, 'kk:mm'))
             setDate(new Date(formatFromUnix(event.unix, 'M/dd/yyyy')))
         }else{
-            const unixNow = Date.now();
+            let unixEditting;
+            
+            if(edittingDate) {
+                unixEditting = new Date(edittingDate)
+            } else {
+                unixEditting = Date.new();
+            }
+
             setLocalEvent({
                 id: generateRandomId(),
                 title: '',
-                date: formatFromUnix(unixNow, 'd M yyyy'),
-                unix: unixNow,
+                unix: unixEditting,
                 color: COLORS[0]
             });
-            setTime(formatFromUnix(unixNow, 'kk:mm'))
-            setDate(formatFromUnix(unixNow, 'M/dd/yyyy'))
+            
+            setTime(formatFromUnix(unixEditting, '01:00'))
+            setDate(formatFromUnix(unixEditting, 'M/dd/yyyy'))
         }
     }, [event])
 
     useEffect(() => {
         const basicDate = format(new Date(date), 'M dd yyyy');
         const unix = (new Date(`${basicDate} ${time}`)).getTime();
-        const calendarDate = format(new Date(date), 'd M yyyy');
         
-        setLocalEvent(prev => ({...prev, date: calendarDate, unix }));
+        setLocalEvent(prev => ({...prev, unix }));
     }, [time, date])
 
     return (

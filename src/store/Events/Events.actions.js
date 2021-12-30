@@ -25,3 +25,10 @@ export function changeView({ show, mode, id }) {
         payload: { show, mode, id }
     }
 }
+
+export function setEdittingDate(payload) {
+    return {
+        type: 'SET_EDITTING_DATE',
+        payload: payload
+    }
+}

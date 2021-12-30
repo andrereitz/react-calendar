@@ -9,3 +9,7 @@ export const selectEvent = (state, id) => {
 export const selectView = (state) => {
     return state.events.view;
 }
+
+export const selectEdittingDate = (state) => {
+    return state.events.edittingDate;
+}

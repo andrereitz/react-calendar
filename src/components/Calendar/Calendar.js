@@ -10,7 +10,7 @@ import { CalendarStyles, TestDatesStyles, HeaderStyles, WeekdaysStyles, DaysStyl
 import { Button } from 'components'
 
 import { useDispatch, useSelector } from 'react-redux';
-import { changeView } from 'store/Events/Events.actions';
+import { changeView, setEdittingDate } from 'store/Events/Events.actions';
 import { selectEvents } from 'store/Events/Events.selectors';
 
 import { getDateInfo, getCalendarPlaceholders } from 'utils/date';
@@ -27,8 +27,16 @@ export function Calendar({ date }) {
         setGroupedEvents( groupBy(sorted, 'unix'));
     }, [events])
 
-    function handleViewToggle(show, mode, event) {
+    function handleViewToggle(e, show, mode, event, edittingDay) {
+        e.stopPropagation();
         dispatch(changeView({ show, mode, id: event }));
+
+        if(edittingDay) {
+            const { year, month } = getDateInfo(currentDate)
+            const dateString = `${month} ${edittingDay} ${year}`;
+
+            dispatch(setEdittingDate(dateString));
+        }
     }
 
     useLayoutEffect(() => {
@@ -36,7 +44,6 @@ export function Calendar({ date }) {
         const { placeholderStart, placeholderEnd } = getCalendarPlaceholders(currentDate)
 
         setCalendarData({year, month: month, daysOnMonth, daysOfMonth, placeholderStart, placeholderEnd})
-
     }, [currentDate])
 
     useLayoutEffect(() => {
@@ -59,7 +66,7 @@ export function Calendar({ date }) {
                     </TestDatesStyles>
                     <HeaderStyles>
                         {MONTHS_NAMES[calendarData.month - 1]} {calendarData.year}
-                        <Button click={() => handleViewToggle(true, EVENT_VIEW_ACTIONS.new, null)}>New Reminder</Button>
+                        <Button click={(e) => handleViewToggle(e, true, EVENT_VIEW_ACTIONS.new, null)}>New Reminder</Button>
                     </HeaderStyles>
                     <WeekdaysStyles className="weekdays">
                         {WEEK_DAYS.map( day => (
@@ -71,17 +78,17 @@ export function Calendar({ date }) {
                             <div key={`ph-top-${i}`} className="placeholder"></div>
                         ))}
                         {calendarData.daysOfMonth.map( day => (
-                            <div key={`day-${day}`} data-day={day}>
+                            <div key={`day-${day}`} data-day={day} onClick={(e) => handleViewToggle(e, true, EVENT_VIEW_ACTIONS.new, null, day)}>
                                 <ul>
                                     {groupedEvents && Object.keys(groupedEvents).map( (eventUnix, index) => {
-                                        if( formatFromUnix(eventUnix, 'd M yyyy') !== `${day} ${calendarData.month} ${calendarData.year}`) return null;
+                                        if( formatFromUnix(eventUnix, 'M d yyyy') !== `${calendarData.month} ${day} ${calendarData.year}`) return null;
 
                                         return(
                                             <li key={`${eventUnix}-${index}`}>
                                                 {groupedEvents[eventUnix].map( event => {
                                                     return(
                                                         <span 
-                                                            onClick={() => handleViewToggle(true, EVENT_VIEW_ACTIONS.view, event.id)} 
+                                                            onClick={(e) => handleViewToggle(e, true, EVENT_VIEW_ACTIONS.view, event.id)} 
                                                             key={event.id} 
                                                             style={{ background: event.color }}
                                                         >
