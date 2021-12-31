@@ -14,7 +14,8 @@ export const HeaderStyles = styled.div`
     padding: 10px 0;
     display: flex;
     justify-content: space-between;
-    align-content: center;
+    align-items: center;
+    color: #606060;
 `
 
 export const WeekdaysStyles = styled.div`
