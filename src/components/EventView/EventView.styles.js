@@ -10,6 +10,7 @@ export const EventViewStyles = styled.div`
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 0 30px 0 rgba(0,0,0,.4);
+    z-index: 100;
 
     ${ props => props.width && `
         margin-left: -${props.width / 2}px;

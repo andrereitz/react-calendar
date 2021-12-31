@@ -1,6 +1,8 @@
 import { useEffect, useState, useLayoutEffect } from 'react';
 import { groupBy } from 'lodash';
 import { addMonths } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
 
 import { MONTHS as MONTHS_NAMES, WEEK_DAYS } from 'constants/calendar';
 import { EVENT_VIEW_ACTIONS } from 'constants/eventView';
@@ -78,9 +80,13 @@ export function Calendar({ date }) {
                     </TestDatesStyles>
                     <HeaderStyles>
                         {/* <Button click={(e) => handleViewToggle(e, true, EVENT_VIEW_ACTIONS.new, null)}>New Reminder</Button> */}
-                        <span onClick={() => navigateMonth('prev')}>{`<`}</span>
+                        <Button click={() => navigateMonth('prev')}>
+                            <FontAwesomeIcon icon={faAngleLeft} />
+                        </Button>
                         <span>{MONTHS_NAMES[calendarData.month - 1]} {calendarData.year}</span>
-                        <span onClick={() => navigateMonth('next')}>{`>`}</span>
+                        <Button click={() => navigateMonth('next')}>
+                            <FontAwesomeIcon icon={faAngleRight} />
+                        </Button>
                     </HeaderStyles>
                     <WeekdaysStyles className="weekdays">
                         {WEEK_DAYS.map( day => (
