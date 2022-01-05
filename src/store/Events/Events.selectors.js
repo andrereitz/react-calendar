@@ -1,7 +1,7 @@
 export const selectEvents = (state) => {
-    return state.events.data;
+    return state.events;
 }
 
 export const selectEvent = (state, id) => {
-    return state.events.data.filter( e => e.id === id)[0];
+    return state.events.filter( e => e.id === id)[0];
 }
