@@ -18,17 +18,3 @@ export function deleteEvent(id) {
         payload: id
     }
 }
-
-export function changeView({ show, mode, id }) {
-    return {
-        type: 'CHANGE_VIEW',
-        payload: { show, mode, id }
-    }
-}
-
-export function setEdittingDate(payload) {
-    return {
-        type: 'SET_EDITTING_DATE',
-        payload: payload
-    }
-}

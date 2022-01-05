@@ -9,8 +9,6 @@ const INITIAL_STATE = {
         { id: generateRandomId(), unix: '1639593000000', title: 'Initial state 5', color: '#94f7f5' },
         { id: generateRandomId(), unix: '1639072800000', title: 'Initial state 6', color: '#f7ff8e' },
     ],
-    view: { show: false },
-    edittingDate: new Date()
 }
 
 export default function eventsReducer(state = INITIAL_STATE, action){
@@ -32,12 +30,6 @@ export default function eventsReducer(state = INITIAL_STATE, action){
 
         case 'DELETE_EVENT':
             return {...state, data: state.data.filter(data => data.id !== action.payload)};
-        
-        case 'CHANGE_VIEW':
-            return {...state, view: { ...state.view, show: action.payload.show, mode: action.payload.mode, id: action.payload.id }}
-
-        case 'SET_EDITTING_DATE':
-            return {...state, edittingDate: action.payload }
         
         default:
             return state;

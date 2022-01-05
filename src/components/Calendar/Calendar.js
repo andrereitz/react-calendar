@@ -10,11 +10,11 @@ import { formatFromUnix } from 'helpers/formatters';
 
 import { CalendarStyles, TestDatesStyles, HeaderStyles, WeekdaysStyles, DaysStyles } from './Calendar.styles';
 
-import { Button } from 'components'
+import { Button, ActionBar } from 'components'
 
 import { useDispatch, useSelector } from 'react-redux';
-import { changeView, setEdittingDate } from 'store/Events/Events.actions';
 import { selectEvents } from 'store/Events/Events.selectors';
+import { changeView } from 'store/EventsUi/EventsUi.actions';
 
 import { getDateInfo, getCalendarPlaceholders } from 'utils/date';
 
@@ -32,14 +32,21 @@ export function Calendar({ date }) {
 
     function handleViewToggle(e, show, mode, event, edittingDay) {
         e.stopPropagation();
-        dispatch(changeView({ show, mode, id: event }));
 
+        const payload = {
+            show,
+            mode,
+            id: event
+        }
+        
         if(edittingDay) {
             const { year, month } = getDateInfo(currentDate)
             const dateString = `${month} ${edittingDay} ${year}`;
-
-            dispatch(setEdittingDate(dateString));
+            
+            payload.edittingDate = dateString;
         }
+
+        dispatch(changeView(payload));
     }
 
     function navigateMonth(order) {
@@ -129,6 +136,7 @@ export function Calendar({ date }) {
                     </DaysStyles>
                 </>
             )}
+            <ActionBar />
         </CalendarStyles>
     )
 }

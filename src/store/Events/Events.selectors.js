@@ -5,11 +5,3 @@ export const selectEvents = (state) => {
 export const selectEvent = (state, id) => {
     return state.events.data.filter( e => e.id === id)[0];
 }
-
-export const selectView = (state) => {
-    return state.events.view;
-}
-
-export const selectEdittingDate = (state) => {
-    return state.events.edittingDate;
-}

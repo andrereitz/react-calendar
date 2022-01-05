@@ -10,8 +10,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import { EventViewStyles, ErrorStyles } from './EventView.styles';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { changeView, updateEvent, addEvent, deleteEvent } from 'store/Events/Events.actions';
-import { selectView, selectEvent, selectEdittingDate } from 'store/Events/Events.selectors';
+import { updateEvent, addEvent, deleteEvent } from 'store/Events/Events.actions';
+import { changeView } from 'store/EventsUi/EventsUi.actions';
+import { selectEvent } from 'store/Events/Events.selectors';
+import { selectView } from 'store/EventsUi/EventsUi.selectors';
+
 
 import { getDateInfo } from 'utils';
 
@@ -29,8 +32,7 @@ export function EventView() {
     const dispatch = useDispatch();
     const view = useSelector(selectView);
     const event = useSelector(state => selectEvent(state, view.id));
-    const edittingDate = useSelector(selectEdittingDate);
-
+    
     function handleEditChange() {
         dispatch(changeView({ show: true, mode: EVENT_VIEW_ACTIONS.edit, id: localEvent.id }));
     }
@@ -87,10 +89,10 @@ export function EventView() {
         }else{
             let unixEditting;
             
-            if(edittingDate) {
-                unixEditting = new Date(edittingDate)
+            if(view.edittingDate) {
+                unixEditting = new Date(view.edittingDate)
             } else {
-                unixEditting = Date.new();
+                unixEditting = Date.now();
             }
 
             setLocalEvent({
