@@ -105,7 +105,7 @@ export function EventView() {
             setTime(formatFromUnix(unixEditting, '01:00'))
             setDate(formatFromUnix(unixEditting, 'M/dd/yyyy'))
         }
-    }, [event])
+    }, [event, view.edittingDate])
 
     useEffect(() => {
         const basicDate = format(new Date(date), 'M dd yyyy');

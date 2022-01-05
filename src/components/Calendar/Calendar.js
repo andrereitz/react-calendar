@@ -71,7 +71,7 @@ export function Calendar({ date, setDate }) {
         if(date) {
             setCurrentDate(new Date(date));
         }
-    }, [date, events])
+    }, [date])
 
     return(
         <CalendarStyles>
