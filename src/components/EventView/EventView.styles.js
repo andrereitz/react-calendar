@@ -25,6 +25,8 @@ export const EventViewStyles = styled.div`
         h1 {
             font-weight: normal;
             margin: 0;
+            font-size: 1.6rem;
+            color: #707070;
         }
         .actions {
             font-size: 26px;
@@ -39,6 +41,9 @@ export const EventViewStyles = styled.div`
         margin: 25px 0 0 0;
         display: inline-block;
         width: 100%;
+        border: 5px solid ${props => props.color};
+        border-top: 0;
+        border-left: 0;
 
         .fieldset {
             width: 100%;
@@ -107,7 +112,9 @@ export const ErrorStyles = styled.ul`
     list-style: none;
     text-align: left;
     padding: 15px;
-    background: red;
-    color: white;
+    border: 1px solid rgba(173, 10, 10);
+    color: rgba(173, 10, 10);
+    background: rgba(242, 188, 188);
     border-radius: 8px;
+    margin: 15px 0 0 0;
 `

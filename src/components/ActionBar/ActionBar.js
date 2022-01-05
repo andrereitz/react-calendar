@@ -9,12 +9,12 @@ import { EVENT_VIEW_ACTIONS } from 'constants/eventView';
 import { useDispatch } from "react-redux";
 import { changeView } from 'store/EventsUi/EventsUi.actions';
 
-export function ActionBar() {
+export function ActionBar({ setDate }) {
     const dispatch = useDispatch();
 
     return(
         <ActionBarStyles>
-            <Button round={true} mr={14} fontSize="1.1rem" size={50} click={(e) => dispatch( changeView({ show: true, mode: EVENT_VIEW_ACTIONS.new, id: null }) )}>
+            <Button round={true} mr={14} fontSize="1.1rem" size={50} click={(e) => setDate(new Date())}>
                 <FontAwesomeIcon icon={faCalendarDay} />
             </Button>
             <Button round fontSize="1.1rem" size={50} click={() => dispatch( changeView({ show: true, mode: EVENT_VIEW_ACTIONS.new, id: null }) )}>

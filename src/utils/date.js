@@ -1,3 +1,5 @@
+import { format, fromUnixTime } from 'date-fns';
+
 /**
  * Return destructured data for a date string
  * 
@@ -56,4 +58,16 @@ export function getSquaresNumber(weekday, days) {
     if(weekday === 6) return 42;
 
     return 35;
+}
+
+/**
+ * Returns a formatted date with passed unix timestamp
+ * and desired pattern
+ * 
+ * @param {String} unix Unix timestamp 
+ * @param {String} pattern Desired Date format 
+ * @returns {String} Formated date with desired pattern
+ */
+export function formatFromUnix(unix, pattern) {
+    return format(fromUnixTime(unix / 1000), pattern);
 }

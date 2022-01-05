@@ -1,12 +1,12 @@
 import { useEffect, useState, useLayoutEffect } from 'react';
 import { groupBy } from 'lodash';
 import { addMonths } from 'date-fns';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 import { MONTHS as MONTHS_NAMES, WEEK_DAYS } from 'constants/calendar';
 import { EVENT_VIEW_ACTIONS } from 'constants/eventView';
-import { formatFromUnix } from 'helpers/formatters';
+import { formatFromUnix } from 'utils/date';
 
 import { CalendarStyles, TestDatesStyles, HeaderStyles, WeekdaysStyles, DaysStyles } from './Calendar.styles';
 
@@ -18,7 +18,7 @@ import { changeView } from 'store/EventsUi/EventsUi.actions';
 
 import { getDateInfo, getCalendarPlaceholders } from 'utils/date';
 
-export function Calendar({ date }) {
+export function Calendar({ date, setDate }) {
     const [currentDate, setCurrentDate] = useState(date ? new Date(date) : new Date());
     const [calendarData, setCalendarData] = useState(null);
     const [groupedEvents, setGroupedEvents] = useState(null);
@@ -86,12 +86,11 @@ export function Calendar({ date }) {
                         <Button click={() => setCurrentDate(new Date('Apr 2016')) } ml={10}>Change to Apr 2016</Button>
                     </TestDatesStyles>
                     <HeaderStyles>
-                        {/* <Button click={(e) => handleViewToggle(e, true, EVENT_VIEW_ACTIONS.new, null)}>New Reminder</Button> */}
-                        <Button click={() => navigateMonth('prev')}>
+                        <Button fontSize="1.2rem" round click={() => navigateMonth('prev')}>
                             <FontAwesomeIcon icon={faAngleLeft} />
                         </Button>
                         <span>{MONTHS_NAMES[calendarData.month - 1]} {calendarData.year}</span>
-                        <Button click={() => navigateMonth('next')}>
+                        <Button fontSize="1.2rem" round click={() => navigateMonth('next')}>
                             <FontAwesomeIcon icon={faAngleRight} />
                         </Button>
                     </HeaderStyles>
@@ -136,7 +135,7 @@ export function Calendar({ date }) {
                     </DaysStyles>
                 </>
             )}
-            <ActionBar />
+            <ActionBar setDate={setDate} />
         </CalendarStyles>
     )
 }

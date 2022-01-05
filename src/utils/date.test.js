@@ -1,4 +1,4 @@
-import { getDateInfo, getCalendarPlaceholders, getSquaresNumber } from './date';
+import { getDateInfo, getCalendarPlaceholders, getSquaresNumber, formatFromUnix } from './date';
 
 describe('utils - Date', () => {
     test('getDateInfo date destructuring is correct', () => {
@@ -26,5 +26,9 @@ describe('utils - Date', () => {
 
     test('getSquaresNumber returns the correct number of calendar squares for small month', () => {
         expect(getSquaresNumber(3, 31)).toBe(35)
+    })
+
+    test('formatFromUnix returns the correct date formatted', () => {
+        expect(formatFromUnix('1641348205609', 'M dd Y')).toBe('1 04 2022')
     })
 })

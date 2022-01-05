@@ -41,6 +41,7 @@ export const DaysStyles = styled.div`
     border-top: 0;
     border-radius: 0 0 10px 10px;
     overflow: hidden;
+    margin-bottom: 100px;
 
     div {
         flex: 1 1 14.28%;

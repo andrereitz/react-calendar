@@ -1,5 +1,7 @@
 import { generateRandomId } from 'helpers';
 
+console.log(generateRandomId())
+
 const INITIAL_STATE = [
     { id: generateRandomId(), unix: '1640455200000', title: 'Christmas', color: '#f7adad' },
     { id: generateRandomId(), unix: '1639141200000', title: 'Initial state 2', color: '#f7adad' },

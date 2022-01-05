@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import DatePicker from 'react-datepicker';
-import { format } from 'date-fns'
+import { format } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import { EVENT_VIEW_ACTIONS, COLORS } from 'constants/eventView';
 import { HOURS } from 'constants/calendar';
-import { formatFromUnix, generateRandomId } from 'helpers';
+import { formatFromUnix } from 'utils/date';
+import { generateRandomId } from 'helpers';
 
 import "react-datepicker/dist/react-datepicker.css";
 import { EventViewStyles, ErrorStyles } from './EventView.styles';
@@ -14,9 +17,6 @@ import { updateEvent, addEvent, deleteEvent } from 'store/Events/Events.actions'
 import { changeView } from 'store/EventsUi/EventsUi.actions';
 import { selectEvent } from 'store/Events/Events.selectors';
 import { selectView } from 'store/EventsUi/EventsUi.selectors';
-
-
-import { getDateInfo } from 'utils';
 
 import { Button } from 'components';
 
@@ -115,7 +115,7 @@ export function EventView() {
     }, [time, date])
 
     return (
-        <EventViewStyles ref={containerRef} width={width}>
+        <EventViewStyles ref={containerRef} width={width} color={localEvent?.color}>
             {localEvent && (
                 <>
                     <div className="header">
@@ -133,10 +133,12 @@ export function EventView() {
                             {view.mode === EVENT_VIEW_ACTIONS.new && (
                                 <Button className="add" click={() => handleAdd()} mr={10}>Add</Button>
                             )}
-                            <div className="close" onClick={() => dispatch(changeView(false))}>X</div>
+                            <Button className="close" fontSize="1.1rem" round click={() => dispatch(changeView(false))}>
+                                <FontAwesomeIcon icon={faTimes} />
+                            </Button>
                         </div>
                     </div>
-                    <form onSubmit={handleUpdate} style={{ background: localEvent.color }}>
+                    <form onSubmit={handleUpdate}>
                         {errors && errors.length > 0 && (
                             <ErrorStyles>
                                 {errors.map( (err, index) => (
